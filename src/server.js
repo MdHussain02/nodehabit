@@ -12,6 +12,7 @@ connectDB();
 
 // Route files
 const authRoutes = require('./routes/auth');
+const choiceRoutes = require('./routes/choices');
 
 const app = express();
 
@@ -23,6 +24,7 @@ app.use(express.json());
 
 // Mount routers
 app.use('/api/v1/auth', authRoutes);
+app.use('/api/v1/choices', choiceRoutes);
 
 // Error handler middleware
 app.use(errorHandler);
