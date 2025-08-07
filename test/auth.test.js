@@ -1,131 +1,130 @@
 const axios = require('axios');
 const { v4: uuidv4 } = require('uuid');
+const { expect } = require('chai');
 
 // Test configuration
 const BASE_URL = 'http://localhost:5000/api/v1/auth';
 
-// Generate a unique email for testing
-const testEmail = `testuser_${uuidv4().substring(0, 8)}@example.com`;
+// Test suite for Authentication API
+describe('Authentication API Tests', () => {
+  // Test user data
+  let testUser;
+  let authToken = '';
 
-// Test user data
-const testUser = {
-  name: 'Test User',
-  email: testEmail,
-  password: 'password123',
-  confirmPassword: 'password123',
-  height: 175,
-  weight: 70,
-  age: 25,
-  gender: 'male',
-  fitnessLevel: 'beginner',
-  primaryGoal: 'weight-loss',
-  wakeUpTime: '07:00',
-  sleepTime: '23:00',
-  preferredWorkoutTime: '18:00',
-  notifications: true,
-  motivationLevel: 'high',
-  weeklyGoal: '4',
-};
-
-// Variable to store the auth token
-let authToken = '';
-
-// Test registration
-const testRegistration = async () => {
-  try {
-    console.log('Testing registration...');
-    const response = await axios.post(`${BASE_URL}/register`, testUser);
+  // Run before all tests
+  before(() => {
+    // Generate unique test data for each test run
+    const testEmail = `testuser_${uuidv4().substring(0, 8)}@example.com`;
     
-    console.log('✅ Registration successful!');
-    console.log('User registered with ID:', response.data.user.id);
-    
-    // Store the token for the login test
-    authToken = response.data.token;
-    return true;
-  } catch (error) {
-    console.error('❌ Registration failed:');
-    if (error.response) {
-      console.error('Status:', error.response.status);
-      console.error('Data:', error.response.data);
-    } else {
-      console.error('Error:', error.message);
-    }
-    return false;
-  }
-};
+    testUser = {
+      name: 'Test User',
+      email: testEmail,
+      password: 'password123',
+      confirmPassword: 'password123',
+      height: 175,
+      weight: 70,
+      age: 25,
+      gender: 'male',
+      fitnessLevel: 'beginner',
+      primaryGoal: 'weight-loss',
+      wakeUpTime: '07:00',
+      sleepTime: '23:00',
+      preferredWorkoutTime: '18:00',
+      notifications: true,
+      motivationLevel: 'high',
+      weeklyGoal: '4',
+    };
+  });
 
-// Test login
-const testLogin = async () => {
-  try {
-    console.log('\nTesting login...');
-    const response = await axios.post(`${BASE_URL}/login`, {
-      email: testUser.email,
-      password: testUser.password,
+  // Test registration
+  describe('POST /register', () => {
+    it('should register a new user with valid data', async () => {
+      const response = await axios.post(`${BASE_URL}/register`, testUser);
+      
+      expect(response.status).to.equal(201);
+      expect(response.data).to.have.property('token');
+      expect(response.data).to.have.property('user');
+      expect(response.data.user).to.have.property('email', testUser.email);
+      
+      // Store the token for subsequent tests
+      authToken = response.data.token;
     });
-    
-    console.log('✅ Login successful!');
-    console.log('User token:', response.data.token);
-    
-    // Store the token for the protected route test
-    authToken = response.data.token;
-    return true;
-  } catch (error) {
-    console.error('❌ Login failed:');
-    if (error.response) {
-      console.error('Status:', error.response.status);
-      console.error('Data:', error.response.data);
-    } else {
-      console.error('Error:', error.message);
-    }
-    return false;
-  }
-};
 
-// Test protected route
-const testProtectedRoute = async () => {
-  try {
-    console.log('\nTesting protected route...');
-    const response = await axios.get(`${BASE_URL}/me`, {
-      headers: {
-        Authorization: `Bearer ${authToken}`,
-      },
+    it('should fail with 400 if required fields are missing', async () => {
+      try {
+        await axios.post(`${BASE_URL}/register`, { name: 'Incomplete User' });
+        throw new Error('Should have failed with 400');
+      } catch (error) {
+        expect(error.response.status).to.equal(400);
+        expect(error.response.data).to.have.property('success', false);
+        expect(error.response.data).to.have.property('error');
+      }
     });
-    
-    console.log('✅ Protected route accessed successfully!');
-    console.log('User data:', response.data.data);
-    return true;
-  } catch (error) {
-    console.error('❌ Failed to access protected route:');
-    if (error.response) {
-      console.error('Status:', error.response.status);
-      console.error('Data:', error.response.data);
-    } else {
-      console.error('Error:', error.message);
-    }
-    return false;
-  }
-};
 
-// Run all tests
-const runTests = async () => {
-  console.log('🚀 Starting API tests...\n');
-  
-  // Run registration test
-  const registrationSuccess = await testRegistration();
-  
-  // Only continue if registration was successful
-  if (registrationSuccess) {
-    // Run login test
-    const loginSuccess = await testLogin();
-    
-    // Only test protected route if login was successful
-    if (loginSuccess) {
-      await testProtectedRoute();
-    }
-  }
-  
-  console.log('\n🏁 All tests completed!');
-};
+    it('should fail with 400 if passwords do not match', async () => {
+      const invalidUser = { ...testUser, email: `test_${uuidv4().substring(0, 5)}@example.com`, confirmPassword: 'different' };
+      
+      try {
+        await axios.post(`${BASE_URL}/register`, invalidUser);
+        throw new Error('Should have failed with 400');
+      } catch (error) {
+        expect(error.response.status).to.equal(400);
+        expect(error.response.data).to.have.property('success', false);
+        expect(error.response.data).to.have.property('error');
+      }
+    });
+  });
 
-// Start the tests
-runTests();
+  // Test login
+  describe('POST /login', () => {
+    it('should login with valid credentials', async () => {
+      const response = await axios.post(`${BASE_URL}/login`, {
+        email: testUser.email,
+        password: testUser.password,
+      });
+
+      expect(response.status).to.equal(200);
+      expect(response.data).to.have.property('token');
+      
+      // Update the auth token
+      authToken = response.data.token;
+    });
+
+    it('should fail with 401 for invalid credentials', async () => {
+      try {
+        await axios.post(`${BASE_URL}/login`, {
+          email: testUser.email,
+          password: 'wrongpassword',
+        });
+        throw new Error('Should have failed with 401');
+      } catch (error) {
+        expect(error.response.status).to.equal(401);
+      }
+    });
+  });
+
+  // Test protected route
+  describe('GET /me', () => {
+    it('should return user data with valid token', async () => {
+      const response = await axios.get(`${BASE_URL}/me`, {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      });
+
+      expect(response.status).to.equal(200);
+      expect(response.data).to.have.property('success', true);
+      expect(response.data.data).to.have.property('_id');
+      expect(response.data.data).to.have.property('email', testUser.email);
+    });
+
+    it('should fail with 500 without token', async () => {
+      try {
+        await axios.get(`${BASE_URL}/me`);
+        throw new Error('Should have failed with 500');
+      } catch (error) {
+        expect(error.response.status).to.equal(500);
+      }
+    });
+  });
+});
