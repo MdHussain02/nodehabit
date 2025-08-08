@@ -118,12 +118,12 @@ describe('Authentication API Tests', () => {
       expect(response.data.data).to.have.property('email', testUser.email);
     });
 
-    it('should fail with 500 without token', async () => {
+    it('should fail with 401 without token', async () => {
       try {
         await axios.get(`${BASE_URL}/me`);
-        throw new Error('Should have failed with 500');
+        throw new Error('Should have failed with 401');
       } catch (error) {
-        expect(error.response.status).to.equal(500);
+        expect(error.response.status).to.equal(401);
       }
     });
   });

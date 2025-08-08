@@ -13,6 +13,7 @@ connectDB();
 // Route files
 const authRoutes = require('./routes/auth');
 const choiceRoutes = require('./routes/choices');
+const habitRoutes = require('./routes/habits');
 
 const app = express();
 
@@ -25,6 +26,7 @@ app.use(express.json());
 // Mount routers
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/choices', choiceRoutes);
+app.use('/api/v1/habits', habitRoutes);
 
 // Error handler middleware
 app.use(errorHandler);
@@ -34,6 +36,8 @@ const PORT = process.env.PORT || 5000;
 const server = app.listen(PORT, () => {
   console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`);
 });
+
+module.exports = app;
 
 // Handle unhandled promise rejections
 process.on('unhandledRejection', (err, promise) => {
