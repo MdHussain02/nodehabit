@@ -52,15 +52,10 @@ exports.createHabit = async (req, res, next) => {
     req.body.user = req.user.id;
 
     // Validate required fields
-    const { name, id, created_time, target_time, icon_id, repeats } = req.body;
+    const { name, created_time, target_time, icon_id, repeats } = req.body;
 
-    if (!name || !id || !created_time || !target_time || !icon_id || !repeats) {
+    if (!name || !created_time || !target_time || !icon_id || !repeats) {
       return next(new ErrorResponse('Please provide all required fields', 400));
-    }
-
-    // Validate that id is a number
-    if (typeof id !== 'number') {
-      return next(new ErrorResponse('ID must be a number', 400));
     }
 
     // Validate that icon_id is a number
@@ -76,12 +71,6 @@ exports.createHabit = async (req, res, next) => {
     // Validate that repeats contains valid day numbers (0-6)
     if (!repeats.every(day => day >= 0 && day <= 6)) {
       return next(new ErrorResponse('Repeats must contain valid day numbers (0-6, where Monday=0)', 400));
-    }
-
-    // Check if habit with this id already exists for this user
-    const existingHabit = await Habit.findOne({ id, user: req.user.id });
-    if (existingHabit) {
-      return next(new ErrorResponse('A habit with this ID already exists', 400));
     }
 
     const habit = await Habit.create(req.body);

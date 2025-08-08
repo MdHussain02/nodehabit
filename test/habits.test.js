@@ -41,7 +41,6 @@ describe('Habits API Tests', () => {
     // Create a test habit
     testHabit = {
       name: 'Morning Exercise',
-      id: Math.floor(Math.random() * 10000),
       created_time: new Date().toISOString(),
       target_time: new Date().toISOString(),
       icon_id: 1,
@@ -63,6 +62,7 @@ describe('Habits API Tests', () => {
       expect(response.data).to.have.property('data');
       expect(response.data.data).to.have.property('name', 'Morning Exercise');
       expect(response.data.data).to.have.property('user');
+      expect(response.data.data).to.have.property('_id'); // MongoDB auto-generated ID
     });
 
     it('should fail with 401 when no token is provided', async () => {
@@ -122,7 +122,6 @@ describe('Habits API Tests', () => {
       // First create a habit to get its ID
       const createResponse = await axios.post(BASE_URL, {
         name: 'Test Habit for GET',
-        id: Math.floor(Math.random() * 10000),
         created_time: new Date().toISOString(),
         target_time: new Date().toISOString(),
         icon_id: 2,

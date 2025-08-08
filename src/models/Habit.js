@@ -8,11 +8,6 @@ const HabitSchema = new mongoose.Schema(
       trim: true,
       maxlength: [100, 'Habit name cannot be more than 100 characters'],
     },
-    id: {
-      type: Number,
-      required: [true, 'Please add a unique identifier'],
-      unique: true,
-    },
     created_time: {
       type: String,
       required: [true, 'Please add creation timestamp'],
@@ -36,7 +31,6 @@ const HabitSchema = new mongoose.Schema(
     icon_id: {
       type: Number,
       required: [true, 'Please add an icon ID'],
-      min: [0, 'Icon ID must be a positive number'],
     },
     repeats: {
       type: [Number],
@@ -59,4 +53,13 @@ const HabitSchema = new mongoose.Schema(
   }
 );
 
-module.exports = mongoose.model('Habit', HabitSchema); 
+// Drop the problematic index on the id field if it exists
+const Habit = mongoose.model('Habit', HabitSchema);
+
+// Drop the index on id field if it exists
+Habit.collection.dropIndex('id_1').catch(err => {
+  // Index doesn't exist, which is fine
+  console.log('Index id_1 dropped or didn\'t exist');
+});
+
+module.exports = Habit; 

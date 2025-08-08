@@ -28,7 +28,6 @@ Content-Type: application/json
 ```json
 {
   "name": "Morning Exercise",
-  "id": 1,
   "created_time": "2024-01-15T10:30:00.000Z",
   "target_time": "2024-01-15T07:00:00.000Z",
   "icon_id": 1,
@@ -38,7 +37,6 @@ Content-Type: application/json
 
 **Field Descriptions:**
 - `name` (string, required): The name of the habit
-- `id` (number, required): Unique identifier for the habit
 - `created_time` (string, required): UTC timestamp of when the habit was created
 - `target_time` (string, required): UTC timestamp representing the time of day for the habit
 - `icon_id` (number, required): Icon identifier for the habit
@@ -51,7 +49,6 @@ Content-Type: application/json
   "data": {
     "_id": "...",
     "name": "Morning Exercise",
-    "id": 1,
     "created_time": "2024-01-15T10:30:00.000Z",
     "target_time": "2024-01-15T07:00:00.000Z",
     "icon_id": 1,
@@ -66,7 +63,6 @@ Content-Type: application/json
 **Error Responses:**
 - `401 Unauthorized`: No valid JWT token provided
 - `400 Bad Request`: Missing required fields or invalid data
-- `400 Bad Request`: Habit with same ID already exists for user
 
 #### GET /api/v1/habits
 Gets all habits for the authenticated user.
@@ -85,7 +81,6 @@ Authorization: Bearer <JWT_TOKEN>
     {
       "_id": "...",
       "name": "Morning Exercise",
-      "id": 1,
       "created_time": "2024-01-15T10:30:00.000Z",
       "target_time": "2024-01-15T07:00:00.000Z",
       "icon_id": 1,

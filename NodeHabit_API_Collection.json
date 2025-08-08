@@ -1,0 +1,255 @@
+{
+	"info": {
+		"_postman_id": "nodehabit-api-collection",
+		"name": "NodeHabit API Collection",
+		"description": "Complete API collection for NodeHabit backend including authentication, choices, and habits endpoints",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Register User",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Test User\",\n  \"email\": \"testuser@example.com\",\n  \"password\": \"password123\",\n  \"confirmPassword\": \"password123\",\n  \"height\": 175,\n  \"weight\": 70,\n  \"age\": 25,\n  \"gender\": \"male\",\n  \"fitnessLevel\": \"beginner\",\n  \"primaryGoal\": \"weight-loss\",\n  \"wakeUpTime\": \"07:00\",\n  \"sleepTime\": \"23:00\",\n  \"preferredWorkoutTime\": \"18:00\",\n  \"notifications\": true,\n  \"motivationLevel\": \"high\",\n  \"weeklyGoal\": \"4\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/auth/register",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"register"
+							]
+						},
+						"description": "Register a new user with all required profile information"
+					},
+					"response": []
+				},
+				{
+					"name": "Login User",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"testuser@example.com\",\n  \"password\": \"password123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/auth/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"login"
+							]
+						},
+						"description": "Login with email and password to get JWT token"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Current User",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/auth/me",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"me"
+							]
+						},
+						"description": "Get current user profile information using JWT token"
+					},
+					"response": []
+				}
+			],
+			"description": "Authentication endpoints for user registration, login, and profile access"
+		},
+		{
+			"name": "Choices",
+			"item": [
+				{
+					"name": "Get All Profile Choices",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/choices",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"choices"
+							]
+						},
+						"description": "Get all available choices for user profile fields (gender, fitness level, goals, etc.)"
+					},
+					"response": []
+				}
+			],
+			"description": "Public endpoints for getting available choices for user profile fields"
+		},
+		{
+			"name": "Habits",
+			"item": [
+				{
+					"name": "Create New Habit",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Morning Exercise\",\n  \"created_time\": \"2024-01-15T10:30:00.000Z\",\n  \"target_time\": \"2024-01-15T07:00:00.000Z\",\n  \"icon_id\": 1,\n  \"repeats\": [0, 1, 2, 3, 4]\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/habits",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"habits"
+							]
+						},
+						"description": "Create a new habit for the authenticated user. Requires JWT token.\n\nFields:\n- name: string (habit name)\n- created_time: string (UTC timestamp)\n- target_time: string (UTC timestamp)\n- icon_id: number (icon identifier)\n- repeats: array of numbers (0-6, where Monday=0)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Habits",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/habits",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"habits"
+							]
+						},
+						"description": "Get all habits for the authenticated user. Requires JWT token."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Specific Habit",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/habits/{{habit_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"habits",
+								"{{habit_id}}"
+							]
+						},
+						"description": "Get a specific habit by its ID. Requires JWT token and user must own the habit."
+					},
+					"response": []
+				}
+			],
+			"description": "Protected habit management endpoints. All require JWT authentication."
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:5000",
+			"type": "string"
+		},
+		{
+			"key": "auth_token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "habit_id",
+			"value": "",
+			"type": "string"
+		}
+	]
+} 
