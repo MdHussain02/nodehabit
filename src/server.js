@@ -14,6 +14,7 @@ connectDB();
 const authRoutes = require('./routes/auth');
 const choiceRoutes = require('./routes/choices');
 const habitRoutes = require('./routes/habits');
+const suggestionRoutes = require('./routes/suggestions');
 
 const app = express();
 
@@ -27,6 +28,7 @@ app.use(express.json());
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/choices', choiceRoutes);
 app.use('/api/v1/habits', habitRoutes);
+app.use('/api/v1/suggestions', suggestionRoutes);
 
 // Error handler middleware
 app.use(errorHandler);
