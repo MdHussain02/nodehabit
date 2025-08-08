@@ -5,7 +5,8 @@
   "scripts": {
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
-    "test": "mocha test/**/*.test.js --timeout 10000 --exit"
+    "test": "mocha test/**/*.test.js --timeout 10000 --exit",
+    "setup-firebase": "node setup-firebase.js"
   },
   "keywords": [],
   "author": "",
@@ -19,8 +20,10 @@
     "dotenv": "^17.2.1",
     "express": "^5.1.0",
     "express-validator": "^7.2.1",
+    "firebase-admin": "^13.4.0",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.17.0"
+    "mongoose": "^8.17.0",
+    "node-cron": "^4.2.1"
   },
   "devDependencies": {
     "axios": "^1.11.0",

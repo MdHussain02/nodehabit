@@ -2,6 +2,7 @@ const User = require('../models/User');
 const Habit = require('../models/Habit');
 const ErrorResponse = require('../utils/errorResponse');
 const { generateHabitSuggestions, analyzeHabitPatterns } = require('../services/aiService');
+const notificationService = require('../services/notificationService');
 
 // @desc    Get personalized habit suggestions
 // @route   GET /api/v1/suggestions
@@ -28,6 +29,16 @@ exports.getHabitSuggestions = async (req, res, next) => {
 
     // Generate suggestions using AI
     const suggestions = await generateHabitSuggestions(user, existingHabits, options);
+
+    // Send notification for new suggestions if user has notifications enabled
+    if (user.notifications && suggestions.length > 0) {
+      try {
+        await notificationService.sendPersonalizedSuggestionsNotification(req.user.id, suggestions);
+      } catch (notificationError) {
+        console.error('Error sending suggestions notification:', notificationError);
+        // Don't fail the request if notification fails
+      }
+    }
 
     res.status(200).json({
       success: true,
@@ -248,6 +259,14 @@ exports.createHabitFromSuggestion = async (req, res, next) => {
       repeats,
       user: req.user.id
     });
+
+    // Send notification for habit creation from suggestion
+    try {
+      await notificationService.sendHabitCreationNotification(req.user.id, habit);
+    } catch (notificationError) {
+      console.error('Error sending habit creation notification:', notificationError);
+      // Don't fail the request if notification fails
+    }
 
     res.status(201).json({
       success: true,

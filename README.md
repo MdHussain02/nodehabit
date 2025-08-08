@@ -1,6 +1,6 @@
 # nodehabit
 
-A Node.js backend API for habit tracking with JWT authentication and MongoDB storage.
+A Node.js backend API for habit tracking with JWT authentication, MongoDB storage, AI-powered habit suggestions, and comprehensive push notification system.
 
 ## API Endpoints
 
@@ -19,6 +19,13 @@ A Node.js backend API for habit tracking with JWT authentication and MongoDB sto
 - `GET /api/v1/suggestions/category/:category` - Get category-specific suggestions (Protected)
 - `GET /api/v1/suggestions/goal/:goal` - Get goal-based suggestions (Protected)
 - `POST /api/v1/suggestions/create` - Create habit from suggestion (Protected)
+
+### Push Notifications (Powered by Firebase)
+- `POST /api/v1/notifications/token` - Update FCM token (Protected)
+- `DELETE /api/v1/notifications/token` - Remove FCM token (Protected)
+- `PUT /api/v1/notifications/preferences` - Update notification preferences (Protected)
+- `GET /api/v1/notifications/preferences` - Get notification preferences (Protected)
+- `POST /api/v1/notifications/test` - Send test notification (Protected)
 
 ### Habits Endpoint Details
 
@@ -208,6 +215,111 @@ Create a new habit from an AI suggestion.
       "user": "..."
     },
     "description": "Created from AI suggestion"
+  }
+}
+```
+
+### Push Notifications Endpoint Details
+
+#### POST /api/v1/notifications/token
+Update FCM token for push notifications.
+
+**Headers:**
+```
+Authorization: Bearer <JWT_TOKEN>
+Content-Type: application/json
+```
+
+**Request Body:**
+```json
+{
+  "fcmToken": "your_fcm_token_here"
+}
+```
+
+**Response (200 OK):**
+```json
+{
+  "success": true,
+  "data": {
+    "message": "FCM token updated successfully",
+    "user": {
+      "id": "...",
+      "name": "John Doe",
+      "email": "john@example.com",
+      "notifications": true
+    }
+  }
+}
+```
+
+#### PUT /api/v1/notifications/preferences
+Update notification preferences.
+
+**Headers:**
+```
+Authorization: Bearer <JWT_TOKEN>
+Content-Type: application/json
+```
+
+**Request Body:**
+```json
+{
+  "notifications": true
+}
+```
+
+**Response (200 OK):**
+```json
+{
+  "success": true,
+  "data": {
+    "message": "Notification preferences updated successfully",
+    "user": {
+      "id": "...",
+      "name": "John Doe",
+      "email": "john@example.com",
+      "notifications": true
+    }
+  }
+}
+```
+
+#### GET /api/v1/notifications/preferences
+Get current notification preferences.
+
+**Headers:**
+```
+Authorization: Bearer <JWT_TOKEN>
+```
+
+**Response (200 OK):**
+```json
+{
+  "success": true,
+  "data": {
+    "notifications": true,
+    "fcmToken": "registered"
+  }
+}
+```
+
+#### POST /api/v1/notifications/test
+Send a test notification to verify setup.
+
+**Headers:**
+```
+Authorization: Bearer <JWT_TOKEN>
+Content-Type: application/json
+```
+
+**Response (200 OK):**
+```json
+{
+  "success": true,
+  "data": {
+    "message": "Test notification sent successfully",
+    "messageId": "message_id_from_firebase"
   }
 }
 ```
