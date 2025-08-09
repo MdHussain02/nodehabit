@@ -1,0 +1,258 @@
+{
+  "info": {
+    "name": "HabitHero Notifications API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_postman_id": "your-postman-id-here"
+  },
+  "item": [
+    {
+      "name": "Update FCM Token",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{auth_token}}",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"fcmToken\": \"your-fcm-token-here\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/v1/notifications/token",
+          "host": ["{{base_url}}"],
+          "path": ["api", "v1", "notifications", "token"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Remove FCM Token",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{auth_token}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/v1/notifications/token",
+          "host": ["{{base_url}}"],
+          "path": ["api", "v1", "notifications", "token"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Update Notification Preferences",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{auth_token}}",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"notifications\": true\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/v1/notifications/preferences",
+          "host": ["{{base_url}}"],
+          "path": ["api", "v1", "notifications", "preferences"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Notification Preferences",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{auth_token}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/v1/notifications/preferences",
+          "host": ["{{base_url}}"],
+          "path": ["api", "v1", "notifications", "preferences"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Send Test Notification",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{auth_token}}",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"title\": \"Test Notification\",\n    \"body\": \"This is a test notification\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/api/v1/notifications/test",
+          "host": ["{{base_url}}"],
+          "path": ["api", "v1", "notifications", "test"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Trigger Test Notifications",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{auth_token}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/v1/notifications/trigger-test",
+          "host": ["{{base_url}}"],
+          "path": ["api", "v1", "notifications", "trigger-test"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Jobs Status",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{auth_token}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/v1/notifications/jobs-status",
+          "host": ["{{base_url}}"],
+          "path": ["api", "v1", "notifications", "jobs-status"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Stop Test Notifications",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{auth_token}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/v1/notifications/stop-test",
+          "host": ["{{base_url}}"],
+          "path": ["api", "v1", "notifications", "stop-test"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Start Test Notifications",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{auth_token}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/v1/notifications/start-test",
+          "host": ["{{base_url}}"],
+          "path": ["api", "v1", "notifications", "start-test"]
+        }
+      },
+      "response": []
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{auth_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Set your base URL here",
+          "if (!pm.environment.get('base_url')) {",
+          "    pm.environment.set('base_url', 'http://localhost:3000');",
+          "}"
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "auth_token",
+      "value": "",
+      "type": "string"
+    }
+  ]
+}

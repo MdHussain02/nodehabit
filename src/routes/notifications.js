@@ -4,7 +4,11 @@ const {
   updateNotificationPreferences,
   getNotificationPreferences,
   sendTestNotification,
-  removeFCMToken
+  removeFCMToken,
+  triggerTestNotifications,
+  getJobsStatus,
+  stopTestNotifications,
+  startTestNotifications
 } = require('../controllers/notificationController');
 
 const router = express.Router();
@@ -29,5 +33,11 @@ router.get('/preferences', getNotificationPreferences);
 
 // Send test notification
 router.post('/test', sendTestNotification);
+
+// Test notification control endpoints
+router.post('/trigger-test', triggerTestNotifications);
+router.get('/jobs-status', getJobsStatus);
+router.post('/stop-test', stopTestNotifications);
+router.post('/start-test', startTestNotifications);
 
 module.exports = router; 

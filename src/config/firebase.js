@@ -4,17 +4,36 @@ const path = require('path');
 // Initialize Firebase Admin SDK
 const initializeFirebase = () => {
   try {
+    // Skip initialization in test environment
+    if (process.env.NODE_ENV === 'test') {
+      console.log('Skipping Firebase initialization in test environment');
+      return { 
+        messaging: () => ({
+          send: async (message) => {
+            console.log('Mock FCM send called with:', message);
+            return 'mock_message_id_' + Date.now();
+          },
+          sendMulticast: async (message) => {
+            console.log('Mock FCM sendMulticast called with:', message);
+            return {
+              successCount: message.tokens ? message.tokens.length : 1,
+              failureCount: 0,
+              responses: message.tokens ? message.tokens.map(() => ({ success: true })) : [{ success: true }]
+            };
+          }
+        })
+      };
+    }
+
     // Check if Firebase is already initialized
     if (admin.apps.length > 0) {
       return admin.apps[0];
     }
 
     // Initialize Firebase Admin SDK
-    // You'll need to download your Firebase service account key and place it in the config folder
-    // or set the GOOGLE_APPLICATION_CREDENTIALS environment variable
     const serviceAccount = process.env.FIREBASE_SERVICE_ACCOUNT_KEY 
       ? JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY)
-      : require(path.join(__dirname, '../../firebase-service-account.json'));
+      : require(path.join(__dirname, '../../habithero-31e24-firebase-adminsdk-fbsvc-17ad84aad5.json'));
 
     const firebaseApp = admin.initializeApp({
       credential: admin.credential.cert(serviceAccount),

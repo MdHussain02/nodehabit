@@ -1,3 +1,6 @@
+// Set test environment
+process.env.NODE_ENV = 'test';
+
 const axios = require('axios');
 const { expect } = require('chai');
 

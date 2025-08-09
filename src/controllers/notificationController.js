@@ -1,6 +1,7 @@
 const User = require('../models/User');
 const ErrorResponse = require('../utils/errorResponse');
 const notificationService = require('../services/notificationService');
+const scheduledNotificationService = require('../services/scheduledNotificationService');
 
 // @desc    Update FCM token for user
 // @route   POST /api/v1/notifications/token
@@ -175,6 +176,83 @@ exports.removeFCMToken = async (req, res, next) => {
           email: user.email,
           notifications: user.notifications
         }
+      }
+    });
+
+  } catch (error) {
+    next(error);
+  }
+};
+
+// @desc    Trigger test notifications for all users
+// @route   POST /api/v1/notifications/trigger-test
+// @access  Private
+exports.triggerTestNotifications = async (req, res, next) => {
+  try {
+    const result = await scheduledNotificationService.triggerTestNotifications();
+    
+    res.status(200).json({
+      success: true,
+      data: result
+    });
+
+  } catch (error) {
+    next(error);
+  }
+};
+
+// @desc    Get scheduled jobs status
+// @route   GET /api/v1/notifications/jobs-status
+// @access  Private
+exports.getJobsStatus = async (req, res, next) => {
+  try {
+    const status = scheduledNotificationService.getJobsStatus();
+    
+    res.status(200).json({
+      success: true,
+      data: {
+        jobs: status,
+        timestamp: new Date().toISOString()
+      }
+    });
+
+  } catch (error) {
+    next(error);
+  }
+};
+
+// @desc    Stop test notifications
+// @route   POST /api/v1/notifications/stop-test
+// @access  Private
+exports.stopTestNotifications = async (req, res, next) => {
+  try {
+    const stopped = scheduledNotificationService.stopTestNotifications();
+    
+    res.status(200).json({
+      success: true,
+      data: {
+        message: stopped ? 'Test notifications stopped successfully' : 'Test notifications were not running',
+        stopped: stopped
+      }
+    });
+
+  } catch (error) {
+    next(error);
+  }
+};
+
+// @desc    Start test notifications
+// @route   POST /api/v1/notifications/start-test
+// @access  Private
+exports.startTestNotifications = async (req, res, next) => {
+  try {
+    const started = scheduledNotificationService.startTestNotifications();
+    
+    res.status(200).json({
+      success: true,
+      data: {
+        message: 'Test notifications started successfully',
+        started: started
       }
     });
 

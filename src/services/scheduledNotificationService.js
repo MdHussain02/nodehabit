@@ -14,6 +14,9 @@ class ScheduledNotificationService {
   initializeScheduledNotifications() {
     console.log('Initializing scheduled notifications...');
 
+    // Test notifications (every 2 minutes) - FOR TESTING ONLY
+    this.scheduleTestNotifications();
+
     // Daily morning reminder (8:00 AM)
     this.scheduleDailyMorningReminder();
 
@@ -33,6 +36,51 @@ class ScheduledNotificationService {
     this.scheduleMotivationNotifications();
 
     console.log('Scheduled notifications initialized successfully');
+  }
+
+  /**
+   * Schedule test notifications (every 2 minutes) - FOR TESTING ONLY
+   */
+  scheduleTestNotifications() {
+    const job = cron.schedule('*/2 * * * *', async () => {
+      console.log('Running test notifications (every 2 minutes)...');
+      try {
+        const users = await User.find({ 
+          notifications: true, 
+          fcmToken: { $exists: true, $ne: null } 
+        });
+        
+        console.log(`Found ${users.length} users with FCM tokens for test notifications`);
+        
+        for (const user of users) {
+          const testNotification = {
+            title: '🧪 Test Notification',
+            body: `This is a test notification sent at ${new Date().toLocaleTimeString()}. Server is working!`,
+            type: 'test',
+            data: {
+              timestamp: new Date().toISOString(),
+              testId: 'scheduled_test_' + Date.now(),
+              message: 'Scheduled test notification every 2 minutes'
+            }
+          };
+
+          const result = await notificationService.sendNotificationToUser(user._id, testNotification);
+          
+          if (result.success) {
+            console.log(`✅ Test notification sent successfully to user ${user.email} (${user.name})`);
+          } else {
+            console.log(`❌ Failed to send test notification to user ${user.email}: ${result.error}`);
+          }
+        }
+      } catch (error) {
+        console.error('Error in test notifications:', error);
+      }
+    }, {
+      timezone: 'UTC'
+    });
+
+    this.jobs.set('testNotifications', job);
+    console.log('✅ Test notifications scheduled (every 2 minutes)');
   }
 
   /**
@@ -287,6 +335,79 @@ class ScheduledNotificationService {
       status[name] = job.running;
     });
     return status;
+  }
+
+  /**
+   * Manually trigger test notifications for all users
+   */
+  async triggerTestNotifications() {
+    console.log('Manually triggering test notifications...');
+    try {
+      const users = await User.find({ 
+        notifications: true, 
+        fcmToken: { $exists: true, $ne: null } 
+      });
+      
+      console.log(`Found ${users.length} users with FCM tokens for manual test notifications`);
+      
+      const results = [];
+      for (const user of users) {
+        const testNotification = {
+          title: '🧪 Manual Test Notification',
+          body: `Manual test notification sent at ${new Date().toLocaleTimeString()}. Server is working!`,
+          type: 'manual_test',
+          data: {
+            timestamp: new Date().toISOString(),
+            testId: 'manual_test_' + Date.now(),
+            message: 'Manually triggered test notification'
+          }
+        };
+
+        const result = await notificationService.sendNotificationToUser(user._id, testNotification);
+        results.push({
+          userId: user._id,
+          email: user.email,
+          name: user.name,
+          success: result.success,
+          messageId: result.messageId,
+          error: result.error
+        });
+      }
+      
+      return {
+        success: true,
+        totalUsers: users.length,
+        results: results
+      };
+    } catch (error) {
+      console.error('Error in manual test notifications:', error);
+      return {
+        success: false,
+        error: error.message
+      };
+    }
+  }
+
+  /**
+   * Stop test notifications
+   */
+  stopTestNotifications() {
+    const job = this.jobs.get('testNotifications');
+    if (job) {
+      job.stop();
+      this.jobs.delete('testNotifications');
+      console.log('✅ Test notifications stopped');
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * Start test notifications
+   */
+  startTestNotifications() {
+    this.scheduleTestNotifications();
+    return true;
   }
 }
 
