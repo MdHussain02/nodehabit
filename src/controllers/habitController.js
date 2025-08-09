@@ -1,5 +1,6 @@
 const Habit = require('../models/Habit');
 const ErrorResponse = require('../utils/errorResponse');
+const notificationService = require('../services/notificationService');
 
 // @desc    Get all habits for user
 // @route   GET /api/v1/habits
@@ -74,6 +75,14 @@ exports.createHabit = async (req, res, next) => {
     }
 
     const habit = await Habit.create(req.body);
+
+    // Send notification for habit creation
+    try {
+      await notificationService.sendHabitCreationNotification(req.user.id, habit);
+    } catch (notificationError) {
+      console.error('Error sending habit creation notification:', notificationError);
+      // Don't fail the request if notification fails
+    }
 
     res.status(201).json({
       success: true,

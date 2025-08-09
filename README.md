@@ -1,6 +1,6 @@
 # nodehabit
 
-A Node.js backend API for habit tracking with JWT authentication and MongoDB storage.
+A Node.js backend API for habit tracking with JWT authentication, MongoDB storage, AI-powered habit suggestions, and comprehensive push notification system.
 
 ## API Endpoints
 
@@ -12,6 +12,20 @@ A Node.js backend API for habit tracking with JWT authentication and MongoDB sto
 - `POST /api/v1/habits` - Create a new habit (Protected)
 - `GET /api/v1/habits` - Get all habits for authenticated user (Protected)
 - `GET /api/v1/habits/:id` - Get a specific habit by ID (Protected)
+
+### AI-Powered Suggestions (Powered by Google Gemini)
+- `GET /api/v1/suggestions` - Get personalized habit suggestions (Protected)
+- `GET /api/v1/suggestions/analysis` - Get habit analysis and insights (Protected)
+- `GET /api/v1/suggestions/category/:category` - Get category-specific suggestions (Protected)
+- `GET /api/v1/suggestions/goal/:goal` - Get goal-based suggestions (Protected)
+- `POST /api/v1/suggestions/create` - Create habit from suggestion (Protected)
+
+### Push Notifications (Powered by Firebase)
+- `POST /api/v1/notifications/token` - Update FCM token (Protected)
+- `DELETE /api/v1/notifications/token` - Remove FCM token (Protected)
+- `PUT /api/v1/notifications/preferences` - Update notification preferences (Protected)
+- `GET /api/v1/notifications/preferences` - Get notification preferences (Protected)
+- `POST /api/v1/notifications/test` - Send test notification (Protected)
 
 ### Habits Endpoint Details
 
@@ -63,6 +77,252 @@ Content-Type: application/json
 **Error Responses:**
 - `401 Unauthorized`: No valid JWT token provided
 - `400 Bad Request`: Missing required fields or invalid data
+
+### AI-Powered Suggestions Endpoint Details
+
+#### GET /api/v1/suggestions
+Get personalized habit suggestions based on user profile and existing habits.
+
+**Headers:**
+```
+Authorization: Bearer <JWT_TOKEN>
+```
+
+**Query Parameters:**
+- `maxSuggestions` (optional): Number of suggestions to generate (default: 5)
+- `focusArea` (optional): Focus area for suggestions (default: 'general')
+- `category` (optional): Specific category filter
+
+**Response (200 OK):**
+```json
+{
+  "success": true,
+  "data": {
+    "suggestions": [
+      {
+        "name": "Morning Stretching",
+        "description": "Gentle stretching to improve flexibility...",
+        "target_time": "2024-01-15T07:00:00.000Z",
+        "repeats": [0, 1, 2, 3, 4],
+        "icon_id": 1,
+        "difficulty": "beginner",
+        "category": "fitness",
+        "estimated_duration": 15,
+        "success_tips": ["Start with 5 minutes", "Do it right after waking up"]
+      }
+    ],
+    "userProfile": {
+      "age": 25,
+      "fitnessLevel": "beginner",
+      "primaryGoal": "weight-loss",
+      "motivationLevel": "high"
+    },
+    "existingHabitsCount": 2,
+    "options": {
+      "maxSuggestions": 5,
+      "focusArea": "general"
+    }
+  }
+}
+```
+
+#### GET /api/v1/suggestions/analysis
+Get comprehensive analysis of user's habit patterns and insights.
+
+**Response (200 OK):**
+```json
+{
+  "success": true,
+  "data": {
+    "analysis": {
+      "strengths": ["You have good morning routines"],
+      "gaps": ["Consider adding evening activities"],
+      "recommendations": ["Focus on consistency"],
+      "consistency_score": 75,
+      "balance_score": 60
+    },
+    "metrics": {
+      "totalHabits": 3,
+      "activeHabits": 2,
+      "averageFrequency": 4.5,
+      "consistencyScore": 75,
+      "balanceScore": 60
+    }
+  }
+}
+```
+
+#### GET /api/v1/suggestions/category/:category
+Get suggestions for a specific category (fitness, nutrition, mental-health, sleep, lifestyle).
+
+**Response (200 OK):**
+```json
+{
+  "success": true,
+  "data": {
+    "category": "fitness",
+    "suggestions": [...],
+    "userProfile": {...}
+  }
+}
+```
+
+#### GET /api/v1/suggestions/goal/:goal
+Get personalized suggestions based on specific fitness goals.
+
+**Response (200 OK):**
+```json
+{
+  "success": true,
+  "data": {
+    "goal": "weight-loss",
+    "suggestions": [...],
+    "userProfile": {...},
+    "goalAlignment": {
+      "userGoal": "weight-loss",
+      "requestedGoal": "weight-loss",
+      "isAligned": true
+    }
+  }
+}
+```
+
+#### POST /api/v1/suggestions/create
+Create a new habit from an AI suggestion.
+
+**Request Body:**
+```json
+{
+  "name": "Morning Stretching",
+  "target_time": "2024-01-15T07:00:00.000Z",
+  "icon_id": 1,
+  "repeats": [0, 1, 2, 3, 4],
+  "description": "Created from AI suggestion"
+}
+```
+
+**Response (201 Created):**
+```json
+{
+  "success": true,
+  "data": {
+    "habit": {
+      "_id": "...",
+      "name": "Morning Stretching",
+      "target_time": "2024-01-15T07:00:00.000Z",
+      "icon_id": 1,
+      "repeats": [0, 1, 2, 3, 4],
+      "user": "..."
+    },
+    "description": "Created from AI suggestion"
+  }
+}
+```
+
+### Push Notifications Endpoint Details
+
+#### POST /api/v1/notifications/token
+Update FCM token for push notifications.
+
+**Headers:**
+```
+Authorization: Bearer <JWT_TOKEN>
+Content-Type: application/json
+```
+
+**Request Body:**
+```json
+{
+  "fcmToken": "your_fcm_token_here"
+}
+```
+
+**Response (200 OK):**
+```json
+{
+  "success": true,
+  "data": {
+    "message": "FCM token updated successfully",
+    "user": {
+      "id": "...",
+      "name": "John Doe",
+      "email": "john@example.com",
+      "notifications": true
+    }
+  }
+}
+```
+
+#### PUT /api/v1/notifications/preferences
+Update notification preferences.
+
+**Headers:**
+```
+Authorization: Bearer <JWT_TOKEN>
+Content-Type: application/json
+```
+
+**Request Body:**
+```json
+{
+  "notifications": true
+}
+```
+
+**Response (200 OK):**
+```json
+{
+  "success": true,
+  "data": {
+    "message": "Notification preferences updated successfully",
+    "user": {
+      "id": "...",
+      "name": "John Doe",
+      "email": "john@example.com",
+      "notifications": true
+    }
+  }
+}
+```
+
+#### GET /api/v1/notifications/preferences
+Get current notification preferences.
+
+**Headers:**
+```
+Authorization: Bearer <JWT_TOKEN>
+```
+
+**Response (200 OK):**
+```json
+{
+  "success": true,
+  "data": {
+    "notifications": true,
+    "fcmToken": "registered"
+  }
+}
+```
+
+#### POST /api/v1/notifications/test
+Send a test notification to verify setup.
+
+**Headers:**
+```
+Authorization: Bearer <JWT_TOKEN>
+Content-Type: application/json
+```
+
+**Response (200 OK):**
+```json
+{
+  "success": true,
+  "data": {
+    "message": "Test notification sent successfully",
+    "messageId": "message_id_from_firebase"
+  }
+}
+```
 
 #### GET /api/v1/habits
 Gets all habits for the authenticated user.

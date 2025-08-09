@@ -76,6 +76,10 @@ const UserSchema = new mongoose.Schema(
       type: String,
       default: '3',
     },
+    fcmToken: {
+      type: String,
+      default: null,
+    },
     resetPasswordToken: String,
     resetPasswordExpire: Date,
   },

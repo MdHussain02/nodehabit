@@ -10,10 +10,20 @@ dotenv.config();
 // Connect to database
 connectDB();
 
+// Initialize Firebase
+const { initializeFirebase } = require('./config/firebase');
+try {
+  initializeFirebase();
+} catch (error) {
+  console.error('Firebase initialization failed:', error);
+}
+
 // Route files
 const authRoutes = require('./routes/auth');
 const choiceRoutes = require('./routes/choices');
 const habitRoutes = require('./routes/habits');
+const suggestionRoutes = require('./routes/suggestions');
+const notificationRoutes = require('./routes/notifications');
 
 const app = express();
 
@@ -27,6 +37,8 @@ app.use(express.json());
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/choices', choiceRoutes);
 app.use('/api/v1/habits', habitRoutes);
+app.use('/api/v1/suggestions', suggestionRoutes);
+app.use('/api/v1/notifications', notificationRoutes);
 
 // Error handler middleware
 app.use(errorHandler);
@@ -36,6 +48,14 @@ const PORT = process.env.PORT || 5000;
 const server = app.listen(PORT, () => {
   console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`);
 });
+
+// Initialize scheduled notifications
+const scheduledNotificationService = require('./services/scheduledNotificationService');
+try {
+  scheduledNotificationService.initializeScheduledNotifications();
+} catch (error) {
+  console.error('Scheduled notifications initialization failed:', error);
+}
 
 module.exports = app;
 

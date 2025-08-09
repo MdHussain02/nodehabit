@@ -2,7 +2,7 @@
 	"info": {
 		"_postman_id": "nodehabit-api-collection",
 		"name": "NodeHabit API Collection",
-		"description": "Complete API collection for NodeHabit backend including authentication, choices, and habits endpoints",
+		"description": "Complete API collection for NodeHabit backend including authentication, choices, habits, and AI-powered suggestion endpoints (Powered by Google Gemini)",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -213,6 +213,269 @@
 				}
 			],
 			"description": "Protected habit management endpoints. All require JWT authentication."
+		},
+		{
+			"name": "AI-Powered Suggestions",
+			"item": [
+				{
+					"name": "Get Personalized Suggestions",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/suggestions?maxSuggestions=5&focusArea=general",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"suggestions"
+							],
+							"query": [
+								{
+									"key": "maxSuggestions",
+									"value": "5"
+								},
+								{
+									"key": "focusArea",
+									"value": "general"
+								}
+							]
+						},
+						"description": "Get AI-powered personalized habit suggestions based on user profile and existing habits.\n\nQuery Parameters:\n- maxSuggestions: Number of suggestions (default: 5)\n- focusArea: Focus area for suggestions (default: 'general')\n- category: Specific category filter"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Habit Analysis",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/suggestions/analysis",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"suggestions",
+								"analysis"
+							]
+						},
+						"description": "Get comprehensive analysis of user's habit patterns, strengths, gaps, and recommendations."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Fitness Category Suggestions",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/suggestions/category/fitness",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"suggestions",
+								"category",
+								"fitness"
+							]
+						},
+						"description": "Get fitness-focused habit suggestions.\n\nValid categories: fitness, nutrition, mental-health, sleep, lifestyle"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Nutrition Category Suggestions",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/suggestions/category/nutrition",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"suggestions",
+								"category",
+								"nutrition"
+							]
+						},
+						"description": "Get nutrition-focused habit suggestions."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Mental Health Category Suggestions",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/suggestions/category/mental-health",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"suggestions",
+								"category",
+								"mental-health"
+							]
+						},
+						"description": "Get mental health and wellness habit suggestions."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Weight Loss Goal Suggestions",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/suggestions/goal/weight-loss",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"suggestions",
+								"goal",
+								"weight-loss"
+							]
+						},
+						"description": "Get personalized suggestions for weight loss goals.\n\nValid goals: weight-loss, muscle-gain, endurance, general-fitness"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Muscle Gain Goal Suggestions",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/suggestions/goal/muscle-gain",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"suggestions",
+								"goal",
+								"muscle-gain"
+							]
+						},
+						"description": "Get personalized suggestions for muscle building goals."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Endurance Goal Suggestions",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/suggestions/goal/endurance",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"suggestions",
+								"goal",
+								"endurance"
+							]
+						},
+						"description": "Get personalized suggestions for endurance training goals."
+					},
+					"response": []
+				},
+				{
+					"name": "Create Habit from Suggestion",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Morning Stretching\",\n  \"target_time\": \"2024-01-15T07:00:00.000Z\",\n  \"icon_id\": 1,\n  \"repeats\": [0, 1, 2, 3, 4],\n  \"description\": \"Created from AI suggestion\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/suggestions/create",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"suggestions",
+								"create"
+							]
+						},
+						"description": "Create a new habit from an AI suggestion. This converts a suggestion into an actual habit."
+					},
+					"response": []
+				}
+			],
+			"description": "AI-powered habit suggestion endpoints. All require JWT authentication and use Google Gemini for personalized recommendations."
 		}
 	],
 	"event": [
@@ -249,6 +512,21 @@
 		{
 			"key": "habit_id",
 			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "suggestion_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "category",
+			"value": "fitness",
+			"type": "string"
+		},
+		{
+			"key": "goal",
+			"value": "weight-loss",
 			"type": "string"
 		}
 	]
