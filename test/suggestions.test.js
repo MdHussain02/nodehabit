@@ -5,8 +5,8 @@ const { expect } = require('chai');
 // Test configuration
 const BASE_URL = 'http://localhost:5000/api/v1/suggestions';
 
-// Mock Gemini API key for testing
-process.env.GEMINI_API_KEY = 'test-key';
+// Mock OpenRouter API key for testing
+process.env.OPENROUTER_API_KEY = 'test-key';
 
 // Test suite for Suggestions API
 describe('Suggestions API Tests', () => {

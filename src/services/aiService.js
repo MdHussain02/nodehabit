@@ -1,17 +1,24 @@
-const { GoogleGenerativeAI } = require('@google/generative-ai');
+const OpenAI = require('openai');
 const ErrorResponse = require('../utils/errorResponse');
 
-// Initialize Gemini client conditionally
-let genAI = null;
+// Initialize OpenRouter client conditionally
+let openai = null;
 
-function getGeminiClient() {
-  if (!genAI) {
-    if (!process.env.GEMINI_API_KEY || process.env.GEMINI_API_KEY === 'test-key') {
-      throw new ErrorResponse('Gemini API key not configured', 500);
+function getOpenAIClient() {
+  if (!openai) {
+    if (!process.env.OPENROUTER_API_KEY || process.env.OPENROUTER_API_KEY === 'test-key') {
+      throw new ErrorResponse('OpenRouter API key not configured', 500);
     }
-    genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+    openai = new OpenAI({
+      baseURL: "https://openrouter.ai/api/v1",
+      apiKey: process.env.OPENROUTER_API_KEY,
+      defaultHeaders: {
+        "HTTP-Referer": process.env.SITE_URL || "http://localhost:3000",
+        "X-Title": process.env.SITE_NAME || "NodeHabit Backend",
+      },
+    });
   }
-  return genAI;
+  return openai;
 }
 
 /**
@@ -23,9 +30,8 @@ function getGeminiClient() {
  */
 exports.generateHabitSuggestions = async (userProfile, existingHabits = [], options = {}) => {
   try {
-    // Get Gemini client
-    const genAI = getGeminiClient();
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    // Get OpenAI client
+    const openai = getOpenAIClient();
 
     // Prepare user data for analysis
     const userData = {
@@ -53,13 +59,22 @@ exports.generateHabitSuggestions = async (userProfile, existingHabits = [], opti
     // Create comprehensive prompt for AI
     const prompt = createAnalysisPrompt(userData, options);
 
-    // Call Gemini API
-    const result = await model.generateContent([
-      "You are a professional fitness and wellness coach specializing in habit formation. Provide personalized, actionable habit suggestions based on user data. Always respond with valid JSON format.",
-      prompt
-    ]);
+    // Call OpenRouter API with DeepSeek model
+    const completion = await openai.chat.completions.create({
+      model: "tngtech/deepseek-r1t2-chimera:free",
+      messages: [
+        {
+          role: "system",
+          content: "You are a professional fitness and wellness coach specializing in habit formation. Provide personalized, actionable habit suggestions based on user data. Always respond with valid JSON format."
+        },
+        {
+          role: "user",
+          content: prompt
+        }
+      ],
+    });
 
-    const response = result.response.text();
+    const response = completion.choices[0].message.content;
     const suggestions = parseAIResponse(response);
 
     return suggestions;
@@ -212,9 +227,8 @@ function generateFallbackSuggestions() {
  */
 exports.analyzeHabitPatterns = async (userProfile, existingHabits) => {
   try {
-    // Get Gemini client
-    const genAI = getGeminiClient();
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    // Get OpenAI client
+    const openai = getOpenAIClient();
 
     const prompt = `
 Analyze the following user's habit patterns and provide insights:
@@ -238,12 +252,21 @@ Provide analysis in JSON format:
 }
 `;
 
-    const result = await model.generateContent([
-      "You are a habit analysis expert. Provide insights about user's habit patterns.",
-      prompt
-    ]);
+    const completion = await openai.chat.completions.create({
+      model: "tngtech/deepseek-r1t2-chimera:free",
+      messages: [
+        {
+          role: "system",
+          content: "You are a habit analysis expert. Provide insights about user's habit patterns."
+        },
+        {
+          role: "user",
+          content: prompt
+        }
+      ],
+    });
 
-    const response = result.response.text();
+    const response = completion.choices[0].message.content;
     const analysis = JSON.parse(response.match(/\{[\s\S]*\}/)[0]);
 
     return analysis;
@@ -259,4 +282,4 @@ Provide analysis in JSON format:
       balance_score: 50
     };
   }
-}; 
+};
