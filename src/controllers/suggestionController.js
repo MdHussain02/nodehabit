@@ -30,8 +30,8 @@ exports.getHabitSuggestions = async (req, res, next) => {
     // Generate suggestions using AI
     const suggestions = await generateHabitSuggestions(user, existingHabits, options);
 
-    // Send notification for new suggestions if user has notifications enabled
-    if (user.notifications && suggestions.length > 0) {
+    // Send notification for new suggestions if user has notifications enabled (skip in test environment)
+    if (user.notifications && suggestions.length > 0 && process.env.NODE_ENV !== 'test') {
       try {
         await notificationService.sendPersonalizedSuggestionsNotification(req.user.id, suggestions);
       } catch (notificationError) {
@@ -260,12 +260,14 @@ exports.createHabitFromSuggestion = async (req, res, next) => {
       user: req.user.id
     });
 
-    // Send notification for habit creation from suggestion
-    try {
-      await notificationService.sendHabitCreationNotification(req.user.id, habit);
-    } catch (notificationError) {
-      console.error('Error sending habit creation notification:', notificationError);
-      // Don't fail the request if notification fails
+    // Send notification for habit creation from suggestion (skip in test environment)
+    if (process.env.NODE_ENV !== 'test') {
+      try {
+        await notificationService.sendHabitCreationNotification(req.user.id, habit);
+      } catch (notificationError) {
+        console.error('Error sending habit creation notification:', notificationError);
+        // Don't fail the request if notification fails
+      }
     }
 
     res.status(201).json({

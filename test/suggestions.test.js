@@ -5,7 +5,7 @@ const { expect } = require('chai');
 // Test configuration
 const BASE_URL = 'http://localhost:5000/api/v1/suggestions';
 
-// Mock OpenRouter API key for testing
+// Mock OpenRouter API key for testing - this will trigger fallback responses
 process.env.OPENROUTER_API_KEY = 'test-key';
 
 // Test suite for Suggestions API
@@ -48,7 +48,8 @@ describe('Suggestions API Tests', () => {
       const response = await axios.get(BASE_URL, {
         headers: {
           'Authorization': `Bearer ${authToken}`
-        }
+        },
+        timeout: 15000 // Increase timeout for AI calls
       });
 
       expect(response.status).to.equal(200);
@@ -57,20 +58,23 @@ describe('Suggestions API Tests', () => {
       expect(response.data.data).to.have.property('suggestions');
       expect(response.data.data).to.have.property('userProfile');
       expect(Array.isArray(response.data.data.suggestions)).to.be.true;
-    });
+      // Should have fallback suggestions even with test key
+      expect(response.data.data.suggestions.length).to.be.greaterThan(0);
+    }).timeout(20000);
 
     it('should get suggestions with custom parameters', async () => {
       const response = await axios.get(`${BASE_URL}?maxSuggestions=3&focusArea=fitness`, {
         headers: {
           'Authorization': `Bearer ${authToken}`
-        }
+        },
+        timeout: 15000
       });
 
       expect(response.status).to.equal(200);
       expect(response.data.data).to.have.property('options');
       expect(response.data.data.options).to.have.property('maxSuggestions', 3);
       expect(response.data.data.options).to.have.property('focusArea', 'fitness');
-    });
+    }).timeout(20000);
 
     it('should fail with 401 when no token is provided', async () => {
       try {
@@ -88,7 +92,8 @@ describe('Suggestions API Tests', () => {
       const response = await axios.get(`${BASE_URL}/analysis`, {
         headers: {
           'Authorization': `Bearer ${authToken}`
-        }
+        },
+        timeout: 15000
       });
 
       expect(response.status).to.equal(200);
@@ -98,7 +103,11 @@ describe('Suggestions API Tests', () => {
       expect(response.data.data.analysis).to.have.property('strengths');
       expect(response.data.data.analysis).to.have.property('gaps');
       expect(response.data.data.analysis).to.have.property('recommendations');
-    });
+      // Should have fallback analysis even with test key
+      expect(Array.isArray(response.data.data.analysis.strengths)).to.be.true;
+      expect(Array.isArray(response.data.data.analysis.gaps)).to.be.true;
+      expect(Array.isArray(response.data.data.analysis.recommendations)).to.be.true;
+    }).timeout(20000);
 
     it('should fail with 401 when no token is provided', async () => {
       try {
@@ -116,25 +125,27 @@ describe('Suggestions API Tests', () => {
       const response = await axios.get(`${BASE_URL}/category/fitness`, {
         headers: {
           'Authorization': `Bearer ${authToken}`
-        }
+        },
+        timeout: 15000
       });
 
       expect(response.status).to.equal(200);
       expect(response.data.data).to.have.property('category', 'fitness');
       expect(response.data.data).to.have.property('suggestions');
       expect(Array.isArray(response.data.data.suggestions)).to.be.true;
-    });
+    }).timeout(20000);
 
     it('should get nutrition category suggestions', async () => {
       const response = await axios.get(`${BASE_URL}/category/nutrition`, {
         headers: {
           'Authorization': `Bearer ${authToken}`
-        }
+        },
+        timeout: 15000
       });
 
       expect(response.status).to.equal(200);
       expect(response.data.data).to.have.property('category', 'nutrition');
-    });
+    }).timeout(20000);
 
     it('should fail with 400 for invalid category', async () => {
       try {
@@ -156,25 +167,27 @@ describe('Suggestions API Tests', () => {
       const response = await axios.get(`${BASE_URL}/goal/weight-loss`, {
         headers: {
           'Authorization': `Bearer ${authToken}`
-        }
+        },
+        timeout: 15000
       });
 
       expect(response.status).to.equal(200);
       expect(response.data.data).to.have.property('goal', 'weight-loss');
       expect(response.data.data).to.have.property('suggestions');
       expect(response.data.data).to.have.property('goalAlignment');
-    });
+    }).timeout(20000);
 
     it('should get muscle-gain goal suggestions', async () => {
       const response = await axios.get(`${BASE_URL}/goal/muscle-gain`, {
         headers: {
           'Authorization': `Bearer ${authToken}`
-        }
+        },
+        timeout: 15000
       });
 
       expect(response.status).to.equal(200);
       expect(response.data.data).to.have.property('goal', 'muscle-gain');
-    });
+    }).timeout(20000);
 
     it('should fail with 400 for invalid goal', async () => {
       try {
