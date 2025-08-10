@@ -202,11 +202,14 @@ function parseAIResponse(response) {
  * Generate fallback suggestions when AI fails
  */
 function generateFallbackSuggestions() {
+  const now = new Date().toISOString();
+  
   return [
+    // Fitness category
     {
       name: "Morning Stretching",
       description: "Gentle stretching to improve flexibility and start your day energized",
-      target_time: new Date().toISOString(),
+      target_time: now,
       repeats: [0, 1, 2, 3, 4],
       icon_id: 1,
       difficulty: "beginner",
@@ -217,13 +220,142 @@ function generateFallbackSuggestions() {
     {
       name: "Evening Walk",
       description: "Light walking to improve cardiovascular health and reduce stress",
-      target_time: new Date().toISOString(),
+      target_time: now,
       repeats: [0, 1, 2, 3, 4, 5, 6],
       icon_id: 2,
       difficulty: "beginner",
       category: "fitness",
       estimated_duration: 30,
       success_tips: ["Start with 10 minutes", "Walk at a comfortable pace", "Enjoy the outdoors"]
+    },
+    {
+      name: "Bodyweight Workout",
+      description: "Full-body workout using your own body weight for strength training",
+      target_time: now,
+      repeats: [0, 2, 4],
+      icon_id: 3,
+      difficulty: "intermediate",
+      category: "fitness",
+      estimated_duration: 25,
+      success_tips: ["Start with basic moves", "Focus on form over speed", "Rest between sets"]
+    },
+    
+    // Nutrition category
+    {
+      name: "Hydration Tracker",
+      description: "Track your daily water intake to stay properly hydrated",
+      target_time: now,
+      repeats: [0, 1, 2, 3, 4, 5, 6],
+      icon_id: 4,
+      difficulty: "beginner",
+      category: "nutrition",
+      estimated_duration: 5,
+      success_tips: ["Set hourly reminders", "Carry a water bottle", "Flavor water with lemon"]
+    },
+    {
+      name: "Healthy Breakfast",
+      description: "Start your day with a nutritious breakfast to fuel your body",
+      target_time: now,
+      repeats: [0, 1, 2, 3, 4],
+      icon_id: 5,
+      difficulty: "beginner",
+      category: "nutrition",
+      estimated_duration: 20,
+      success_tips: ["Prep ingredients the night before", "Include protein and fiber", "Avoid sugary cereals"]
+    },
+    {
+      name: "Mindful Eating",
+      description: "Practice eating slowly and without distractions to improve digestion",
+      target_time: now,
+      repeats: [0, 1, 2, 3, 4, 5, 6],
+      icon_id: 6,
+      difficulty: "beginner",
+      category: "nutrition",
+      estimated_duration: 30,
+      success_tips: ["Chew each bite 20 times", "Put utensils down between bites", "Avoid screens during meals"]
+    },
+    
+    // Mental Health category
+    {
+      name: "Meditation Practice",
+      description: "Daily meditation to reduce stress and improve mental clarity",
+      target_time: now,
+      repeats: [0, 1, 2, 3, 4, 5, 6],
+      icon_id: 7,
+      difficulty: "beginner",
+      category: "mental-health",
+      estimated_duration: 10,
+      success_tips: ["Start with 5 minutes", "Use a meditation app", "Find a quiet space"]
+    },
+    {
+      name: "Gratitude Journal",
+      description: "Write down three things you're grateful for each day",
+      target_time: now,
+      repeats: [0, 1, 2, 3, 4, 5, 6],
+      icon_id: 8,
+      difficulty: "beginner",
+      category: "mental-health",
+      estimated_duration: 10,
+      success_tips: ["Be specific about what you're grateful for", "Write at the same time daily", "Reflect on why you're grateful"]
+    },
+    {
+      name: "Digital Detox",
+      description: "Take a break from screens to reduce mental fatigue",
+      target_time: now,
+      repeats: [0, 1, 2, 3, 4, 5, 6],
+      icon_id: 9,
+      difficulty: "intermediate",
+      category: "mental-health",
+      estimated_duration: 60,
+      success_tips: ["Set specific times for detox", "Replace screen time with reading", "Keep devices in another room"]
+    },
+    
+    // Sleep category
+    {
+      name: "Bedtime Routine",
+      description: "Establish a consistent bedtime routine to improve sleep quality",
+      target_time: now,
+      repeats: [0, 1, 2, 3, 4, 5, 6],
+      icon_id: 10,
+      difficulty: "beginner",
+      category: "sleep",
+      estimated_duration: 60,
+      success_tips: ["Go to bed at the same time", "Avoid screens 1 hour before bed", "Keep bedroom cool and dark"]
+    },
+    {
+      name: "Sleep Environment Optimization",
+      description: "Create an optimal sleep environment for better rest",
+      target_time: now,
+      repeats: [0, 1, 2, 3, 4, 5, 6],
+      icon_id: 1,
+      difficulty: "beginner",
+      category: "sleep",
+      estimated_duration: 30,
+      success_tips: ["Use blackout curtains", "Keep room temperature between 65-68°F", "Invest in a comfortable pillow"]
+    },
+    
+    // Lifestyle category
+    {
+      name: "Daily Planning",
+      description: "Plan your day the night before to improve productivity",
+      target_time: now,
+      repeats: [0, 1, 2, 3, 4, 5, 6],
+      icon_id: 2,
+      difficulty: "beginner",
+      category: "lifestyle",
+      estimated_duration: 15,
+      success_tips: ["Set 3 main priorities", "Prepare clothes the night before", "Review your plan in the morning"]
+    },
+    {
+      name: "Declutter Workspace",
+      description: "Keep your workspace organized to reduce stress and improve focus",
+      target_time: now,
+      repeats: [0, 3],
+      icon_id: 3,
+      difficulty: "intermediate",
+      category: "lifestyle",
+      estimated_duration: 30,
+      success_tips: ["Follow the 'one item in, one item out' rule", "Clean one area at a time", "Dispose of unnecessary items"]
     }
   ];
 }
