@@ -34,8 +34,10 @@ JWT_EXPIRE=30d
 NODE_ENV=development
 PORT=5000
 
-# Gemini Configuration (Required for AI-powered suggestions)
-GEMINI_API_KEY=your_gemini_api_key_here
+# OpenRouter Configuration (Required for AI-powered suggestions)
+OPENROUTER_API_KEY=your_openrouter_api_key_here
+SITE_URL=http://localhost:3000
+SITE_NAME=NodeHabit Backend
 
 # Firebase Configuration (Required for push notifications)
 FIREBASE_PROJECT_ID=habithero-31e24
