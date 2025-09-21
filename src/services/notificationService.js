@@ -21,12 +21,6 @@ class NotificationService {
         return { success: false, error: 'User not found or no FCM token' };
       }
 
-      // Check if this is a test token
-      if (user.fcmToken.startsWith('test_') || user.fcmToken.includes('test')) {
-        console.log(`Test token detected for user ${userId}, returning mock success`);
-        return { success: true, messageId: 'mock_message_id_' + Date.now() };
-      }
-
       const message = {
         token: user.fcmToken,
         notification: {
