@@ -3,7 +3,8 @@ const { protect } = require('../middleware/auth');
 const { 
   getHabits, 
   getHabit, 
-  createHabit 
+  createHabit, 
+  markHabitDone 
 } = require('../controllers/habitController');
 
 const router = express.Router();
@@ -18,4 +19,7 @@ router.route('/')
 router.route('/:id')
   .get(getHabit);
 
-module.exports = router; 
+// Mark habit as done
+router.post('/:id/mark', markHabitDone);
+
+module.exports = router;

@@ -47,6 +47,24 @@ const HabitSchema = new mongoose.Schema(
       ref: 'User',
       required: true,
     },
+    completions: [
+      {
+        timestamp: {
+          type: String,
+          required: true,
+          validate: {
+            validator: function(v) {
+              return !isNaN(Date.parse(v));
+            },
+            message: 'Please provide a valid UTC timestamp for completion timestamp'
+          }
+        },
+        on_time: {
+          type: Boolean,
+          default: false,
+        },
+      }
+    ],
   },
   {
     timestamps: true,
@@ -62,4 +80,4 @@ Habit.collection.dropIndex('id_1').catch(err => {
   console.log('Index id_1 dropped or didn\'t exist');
 });
 
-module.exports = Habit; 
+module.exports = Habit;
