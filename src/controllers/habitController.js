@@ -37,10 +37,30 @@ exports.getHabits = async (req, res, next) => {
       ]
     }).sort({ createdAt: -1 });
 
+    // Normalize repeats to numbers in the response
+    const ymdForRequestedDate = (() => {
+      if (date) return new Date(`${date}T00:00:00.000Z`).toISOString().slice(0, 10);
+      return new Date().toISOString().slice(0, 10);
+    })();
+
+    const data = habits.map((h) => {
+      const obj = h.toObject();
+      obj.repeats = Array.isArray(obj.repeats)
+        ? obj.repeats.map((v) => (typeof v === 'string' ? parseInt(v, 10) : v))
+        : [];
+      // completed for requested date (UTC)
+      const comps = Array.isArray(obj.completions) ? obj.completions : [];
+      obj.completed = comps.some(c => {
+        const d = new Date(c.timestamp);
+        return !isNaN(d) && d.toISOString().slice(0, 10) === ymdForRequestedDate;
+      });
+      return obj;
+    });
+
     res.status(200).json({
       success: true,
-      count: habits.length,
-      data: habits,
+      count: data.length,
+      data,
     });
   } catch (error) {
     next(error);
@@ -178,9 +198,50 @@ exports.markHabitDone = async (req, res, next) => {
     const diffMinutes = Math.abs(minutes(completionDate) - minutes(targetDate));
     const onTime = diffMinutes <= toleranceMinutes;
 
-    // Append completion
+    // Prevent duplicate completion for same UTC date
+    const toYMD = (d) => new Date(d).toISOString().slice(0, 10);
+    const targetYMD = toYMD(completionTimestamp);
     habit.completions = habit.completions || [];
+    const existing = habit.completions.find(c => !isNaN(Date.parse(c.timestamp)) && toYMD(c.timestamp) === targetYMD);
+    if (existing) {
+      if (onTime && !existing.on_time) existing.on_time = true;
+      await habit.save();
+      return res.status(200).json({
+        success: true,
+        data: {
+          habit_id: habit._id,
+          completion: existing,
+          streak: habit.streak ?? 0,
+          duplicate: true,
+        },
+      });
+    }
+
+    // Append new completion
     habit.completions.push({ timestamp: completionTimestamp, on_time: onTime });
+
+    // Recompute streak: consecutive UTC days up to today that have a completion
+    const ymdSet = new Set(
+      habit.completions
+        .map(c => new Date(c.timestamp))
+        .filter(d => !isNaN(d))
+        .map(d => d.toISOString().slice(0, 10))
+    );
+    let streak = 0;
+    const decDay = (date) => {
+      const d = new Date(date);
+      d.setUTCDate(d.getUTCDate() - 1);
+      return d;
+    };
+    let cursor = new Date(); // today UTC
+    let cursorYMD = cursor.toISOString().slice(0, 10);
+    while (ymdSet.has(cursorYMD)) {
+      streak += 1;
+      cursor = decDay(cursor);
+      cursorYMD = cursor.toISOString().slice(0, 10);
+    }
+    habit.streak = streak;
+
     await habit.save();
 
     res.status(201).json({
@@ -188,6 +249,7 @@ exports.markHabitDone = async (req, res, next) => {
       data: {
         habit_id: habit._id,
         completion: { timestamp: completionTimestamp, on_time: onTime },
+        streak: habit.streak,
       },
     });
   } catch (error) {

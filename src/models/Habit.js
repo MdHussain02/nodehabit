@@ -65,6 +65,12 @@ const HabitSchema = new mongoose.Schema(
         },
       }
     ],
+    // Consecutive days completed up to today (UTC)
+    streak: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
   },
   {
     timestamps: true,
